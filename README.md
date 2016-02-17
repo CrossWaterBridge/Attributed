@@ -9,7 +9,7 @@ Convert HTML or XML to an NSAttributedString.
 
 ### Installation
 
-Install with Cocoapods by adding the following to your Podfile:
+Install with CocoaPods by adding the following to your Podfile:
 
 ```ruby
 use_frameworks!
