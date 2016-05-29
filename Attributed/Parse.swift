@@ -72,7 +72,7 @@ private class ParserDelegate: NSObject, NSXMLParserDelegate {
     }
     
     func modifyInRange(range: NSRange) {
-        if range.location >= 0 && range.length > 0 {
+        if !stack.isEmpty {
             modifier(mutableAttributedString: result, range: range, stack: Array(stack[1..<stack.count]))
         }
     }

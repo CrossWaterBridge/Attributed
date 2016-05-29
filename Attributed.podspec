@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name         = "Attributed"
-  s.version      = "1.0.0"
+  s.version      = "1.1.0"
   s.summary      = "Convert HTML or XML to an NSAttributedString."
   s.author       = 'Hilton Campbell'
   s.homepage     = "https://github.com/CrossWaterBridge/Attributed"

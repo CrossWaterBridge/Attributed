@@ -32,7 +32,7 @@ public struct MarkupElement {
     }
 }
 
-func ~= (pattern: String, element: MarkupElement) -> Bool {
+public func ~= (pattern: String, element: MarkupElement) -> Bool {
     let scanner = NSScanner(string: pattern)
     scanner.charactersToBeSkipped = nil
     
