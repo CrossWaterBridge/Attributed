@@ -25,11 +25,11 @@ import UIKit
 extension UIFont {
     
     func fontWithBold() -> UIFont {
-        return UIFont(descriptor: fontDescriptor().fontDescriptorWithSymbolicTraits(fontDescriptor().symbolicTraits.union(.TraitBold)), size: pointSize)
+        return fontDescriptor().fontDescriptorWithSymbolicTraits(fontDescriptor().symbolicTraits.union(.TraitBold)).flatMap { UIFont(descriptor: $0, size: pointSize) } ?? self
     }
     
     func fontWithItalic() -> UIFont {
-        return UIFont(descriptor: fontDescriptor().fontDescriptorWithSymbolicTraits(fontDescriptor().symbolicTraits.union(.TraitItalic)), size: pointSize)
+        return fontDescriptor().fontDescriptorWithSymbolicTraits(fontDescriptor().symbolicTraits.union(.TraitItalic)).flatMap { UIFont(descriptor: $0, size: pointSize) } ?? self
     }
     
     func fontWithMonospacedNumbers() -> UIFont {
