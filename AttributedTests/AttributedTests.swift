@@ -21,30 +21,38 @@
 //
 
 import XCTest
-import Attributed
+@testable import Attributed
+
+private let baseFont = UIFont.systemFontOfSize(10)
+private let modifier: Modifier = modifierWithBaseAttributes([NSFontAttributeName: baseFont], modifiers: [
+    selectMap("strong", bold),
+    selectMap("br", lineBreak)
+])
 
 class AttributedTests: XCTestCase {
-    
-    override func setUp() {
-        super.setUp()
-        // Put setup code here. This method is called before the invocation of each test method in the class.
+    func testEmpty() {
+        let actual = NSAttributedString.attributedStringFromMarkup("", withModifier: modifier)
+        let expected = NSAttributedString()
+        XCTAssertEqual(actual, expected)
     }
     
-    override func tearDown() {
-        // Put teardown code here. This method is called after the invocation of each test method in the class.
-        super.tearDown()
+    func testPlainText() {
+        let actual = NSAttributedString.attributedStringFromMarkup("puppy", withModifier: modifier)
+        let expected = NSAttributedString(string: "puppy", attributes: [NSFontAttributeName: baseFont])
+        XCTAssertEqual(actual, expected)
     }
     
-    func testExample() {
-        // This is an example of a functional test case.
-        // Use XCTAssert and related functions to verify your tests produce the correct results.
+    func testElement() {
+        let actual = NSAttributedString.attributedStringFromMarkup("kittens <strong>and</strong> puppies", withModifier: modifier)
+        let expected = NSMutableAttributedString(string: "kittens ", attributes: [NSFontAttributeName: baseFont])
+        expected.appendAttributedString(NSAttributedString(string: "and", attributes: [NSFontAttributeName: baseFont.fontWithBold()]))
+        expected.appendAttributedString(NSAttributedString(string: " puppies", attributes: [NSFontAttributeName: baseFont]))
+        XCTAssertEqual(actual, expected)
     }
     
-    func testPerformanceExample() {
-        // This is an example of a performance test case.
-        self.measureBlock {
-            // Put the code you want to measure the time of here.
-        }
+    func testLineBreak() {
+        let actual = NSAttributedString.attributedStringFromMarkup("kittens<br/>puppies", withModifier: modifier)
+        let expected = NSAttributedString(string: "kittens\npuppies", attributes: [NSFontAttributeName: baseFont])
+        XCTAssertEqual(actual, expected)
     }
-    
 }

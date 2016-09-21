@@ -46,6 +46,19 @@ public func selectMap(selector: String, _ map: Map) -> Modifier {
     }
 }
 
+public typealias MapWithContext = (NSAttributedString, NSAttributedString) -> NSAttributedString
+
+public func selectMap(selector: String, _ mapWithContext: MapWithContext) -> Modifier {
+    return { mutableAttributedString, range, stack in
+        for element in stack {
+            if selector ~= element {
+                let attributedString = mutableAttributedString.attributedSubstringFromRange(range)
+                mutableAttributedString.replaceCharactersInRange(range, withAttributedString: mapWithContext(mutableAttributedString, attributedString))
+            }
+        }
+    }
+}
+
 public func bold(attributedString: NSAttributedString) -> NSAttributedString {
     if let result = attributedString.mutableCopy() as? NSMutableAttributedString {
         if let font = attributedString.attributesAtIndex(0, effectiveRange: nil)[NSFontAttributeName] as? UIFont {
@@ -93,4 +106,8 @@ public func smallCaps(attributedString: NSAttributedString) -> NSAttributedStrin
         return result
     }
     return attributedString
+}
+
+public func lineBreak(context: NSAttributedString, attributedString: NSAttributedString) -> NSAttributedString {
+    return NSAttributedString(string: "\n", attributes: context.attributesAtIndex(context.length - 1, effectiveRange: nil))
 }

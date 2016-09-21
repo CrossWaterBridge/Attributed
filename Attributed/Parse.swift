@@ -23,7 +23,6 @@
 import UIKit
 
 extension NSAttributedString {
-    
     public static func attributedStringFromMarkup(markup: String, withModifier modifier: Modifier) -> NSAttributedString? {
         if let data = "<xml>\(markup)</xml>".dataUsingEncoding(NSUTF8StringEncoding) {
             let parser = NSXMLParser(data: data)
@@ -35,11 +34,9 @@ extension NSAttributedString {
             return nil
         }
     }
-    
 }
 
 private class ParserDelegate: NSObject, NSXMLParserDelegate {
-    
     let result = NSMutableAttributedString()
     
     let modifier: Modifier
@@ -51,7 +48,8 @@ private class ParserDelegate: NSObject, NSXMLParserDelegate {
         self.modifier = modifier
     }
     
-    @objc func parser(parser: NSXMLParser, didStartElement elementName: String, namespaceURI: String?, qualifiedName qName: String?, attributes attributeDict: [String : String]) {
+    @objc
+    func parser(parser: NSXMLParser, didStartElement elementName: String, namespaceURI: String?, qualifiedName qName: String?, attributes attributeDict: [String : String]) {
         let range = NSMakeRange(lastIndex, result.length - lastIndex)
         modifyInRange(range)
         
@@ -59,7 +57,8 @@ private class ParserDelegate: NSObject, NSXMLParserDelegate {
         stack.append(MarkupElement(name: elementName, attributes: attributeDict))
     }
     
-    @objc func parser(parser: NSXMLParser, didEndElement elementName: String, namespaceURI: String?, qualifiedName qName: String?) {
+    @objc
+    func parser(parser: NSXMLParser, didEndElement elementName: String, namespaceURI: String?, qualifiedName qName: String?) {
         let range = NSMakeRange(lastIndex, result.length - lastIndex)
         modifyInRange(range)
         
@@ -67,7 +66,8 @@ private class ParserDelegate: NSObject, NSXMLParserDelegate {
         stack.removeLast()
     }
     
-    @objc func parser(parser: NSXMLParser, foundCharacters string: String) {
+    @objc
+    func parser(parser: NSXMLParser, foundCharacters string: String) {
         result.appendAttributedString(NSAttributedString(string: string))
     }
     
@@ -76,5 +76,4 @@ private class ParserDelegate: NSObject, NSXMLParserDelegate {
             modifier(mutableAttributedString: result, range: range, stack: Array(stack[1..<stack.count]))
         }
     }
-    
 }
