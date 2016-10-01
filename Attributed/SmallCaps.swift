@@ -24,27 +24,27 @@ import UIKit
 
 extension NSMutableAttributedString {
     
-    public func simulateSmallCapsInRange(range: NSRange, withFont font: UIFont, attributes: [String: AnyObject]) {
+    public func simulateSmallCapsInRange(_ range: NSRange, withFont font: UIFont, attributes: [String: Any]) {
         let replacement = NSMutableAttributedString()
         
         var smallAttributes = attributes
-        smallAttributes[NSFontAttributeName] = font.fontWithSize(ceil(font.pointSize * 1.1 * font.xHeight / font.capHeight))
+        smallAttributes[NSFontAttributeName] = font.withSize(ceil(font.pointSize * 1.1 * font.xHeight / font.capHeight))
         
-        let lowercaseCharacterSet = NSCharacterSet.lowercaseLetterCharacterSet()
+        let lowercaseCharacterSet = CharacterSet.lowercaseLetters
         
-        let scanner = NSScanner(string: attributedSubstringFromRange(range).string)
+        let scanner = Scanner(string: attributedSubstring(from: range).string)
         scanner.charactersToBeSkipped = nil
-        while !scanner.atEnd {
+        while !scanner.isAtEnd {
             var value: NSString?
-            if scanner.scanCharactersFromSet(lowercaseCharacterSet, intoString: &value), let value = value {
-                replacement.appendAttributedString(NSAttributedString(string: value.uppercaseString, attributes: smallAttributes))
+            if scanner.scanCharacters(from: lowercaseCharacterSet, into: &value), let value = value {
+                replacement.append(NSAttributedString(string: value.uppercased, attributes: smallAttributes))
             }
-            if scanner.scanUpToCharactersFromSet(lowercaseCharacterSet, intoString: &value), let value = value {
-                replacement.appendAttributedString(NSAttributedString(string: value as String, attributes: attributes))
+            if scanner.scanUpToCharacters(from: lowercaseCharacterSet, into: &value), let value = value {
+                replacement.append(NSAttributedString(string: value as String, attributes: attributes))
             }
         }
         
-        replaceCharactersInRange(range, withAttributedString: replacement)
+        replaceCharacters(in: range, with: replacement)
     }
     
 }

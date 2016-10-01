@@ -23,7 +23,7 @@
 import XCTest
 @testable import Attributed
 
-private let baseFont = UIFont.systemFontOfSize(10)
+private let baseFont = UIFont.systemFont(ofSize: 10)
 private let modifier: Modifier = modifierWithBaseAttributes([NSFontAttributeName: baseFont], modifiers: [
     selectMap("strong", bold),
     selectMap("br", lineBreak)
@@ -45,8 +45,8 @@ class AttributedTests: XCTestCase {
     func testElement() {
         let actual = NSAttributedString.attributedStringFromMarkup("kittens <strong>and</strong> puppies", withModifier: modifier)
         let expected = NSMutableAttributedString(string: "kittens ", attributes: [NSFontAttributeName: baseFont])
-        expected.appendAttributedString(NSAttributedString(string: "and", attributes: [NSFontAttributeName: baseFont.fontWithBold()]))
-        expected.appendAttributedString(NSAttributedString(string: " puppies", attributes: [NSFontAttributeName: baseFont]))
+        expected.append(NSAttributedString(string: "and", attributes: [NSFontAttributeName: baseFont.fontWithBold()]))
+        expected.append(NSAttributedString(string: " puppies", attributes: [NSFontAttributeName: baseFont]))
         XCTAssertEqual(actual, expected)
     }
     

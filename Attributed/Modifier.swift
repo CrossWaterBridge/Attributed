@@ -22,25 +22,25 @@
 
 import UIKit
 
-public typealias Modifier = (mutableAttributedString: NSMutableAttributedString, range: NSRange, stack: [MarkupElement]) -> Void
+public typealias Modifier = (_ mutableAttributedString: NSMutableAttributedString, _ range: NSRange, _ stack: [MarkupElement]) -> Void
 
-public func modifierWithBaseAttributes(attributes: [String: AnyObject], modifiers: [Modifier]) -> Modifier {
+public func modifierWithBaseAttributes(_ attributes: [String: Any], modifiers: [Modifier]) -> Modifier {
     return { mutableAttributedString, range, stack in
         mutableAttributedString.addAttributes(attributes, range: range)
         for modifier in modifiers {
-            modifier(mutableAttributedString: mutableAttributedString, range: range, stack: stack)
+            modifier(mutableAttributedString, range, stack)
         }
     }
 }
 
 public typealias Map = (NSAttributedString) -> NSAttributedString
 
-public func selectMap(selector: String, _ map: Map) -> Modifier {
+public func selectMap(_ selector: String, _ map: @escaping Map) -> Modifier {
     return { mutableAttributedString, range, stack in
         for element in stack {
             if selector ~= element {
-                let attributedString = mutableAttributedString.attributedSubstringFromRange(range)
-                mutableAttributedString.replaceCharactersInRange(range, withAttributedString: map(attributedString))
+                let attributedString = mutableAttributedString.attributedSubstring(from: range)
+                mutableAttributedString.replaceCharacters(in: range, with: map(attributedString))
             }
         }
     }
@@ -48,20 +48,20 @@ public func selectMap(selector: String, _ map: Map) -> Modifier {
 
 public typealias MapWithContext = (NSAttributedString, NSAttributedString) -> NSAttributedString
 
-public func selectMap(selector: String, _ mapWithContext: MapWithContext) -> Modifier {
+public func selectMap(_ selector: String, _ mapWithContext: @escaping MapWithContext) -> Modifier {
     return { mutableAttributedString, range, stack in
         for element in stack {
             if selector ~= element {
-                let attributedString = mutableAttributedString.attributedSubstringFromRange(range)
-                mutableAttributedString.replaceCharactersInRange(range, withAttributedString: mapWithContext(mutableAttributedString, attributedString))
+                let attributedString = mutableAttributedString.attributedSubstring(from: range)
+                mutableAttributedString.replaceCharacters(in: range, with: mapWithContext(mutableAttributedString, attributedString))
             }
         }
     }
 }
 
-public func bold(attributedString: NSAttributedString) -> NSAttributedString {
+public func bold(_ attributedString: NSAttributedString) -> NSAttributedString {
     if let result = attributedString.mutableCopy() as? NSMutableAttributedString {
-        if let font = attributedString.attributesAtIndex(0, effectiveRange: nil)[NSFontAttributeName] as? UIFont {
+        if let font = attributedString.attributes(at: 0, effectiveRange: nil)[NSFontAttributeName] as? UIFont {
             let range = NSMakeRange(0, attributedString.length)
             result.addAttribute(NSFontAttributeName, value: font.fontWithBold(), range: range)
         }
@@ -70,9 +70,9 @@ public func bold(attributedString: NSAttributedString) -> NSAttributedString {
     return attributedString
 }
 
-public func italic(attributedString: NSAttributedString) -> NSAttributedString {
+public func italic(_ attributedString: NSAttributedString) -> NSAttributedString {
     if let result = attributedString.mutableCopy() as? NSMutableAttributedString {
-        if let font = attributedString.attributesAtIndex(0, effectiveRange: nil)[NSFontAttributeName] as? UIFont {
+        if let font = attributedString.attributes(at: 0, effectiveRange: nil)[NSFontAttributeName] as? UIFont {
             let range = NSMakeRange(0, attributedString.length)
             result.addAttribute(NSFontAttributeName, value: font.fontWithItalic(), range: range)
         }
@@ -81,9 +81,9 @@ public func italic(attributedString: NSAttributedString) -> NSAttributedString {
     return attributedString
 }
 
-public func monospacedNumbers(attributedString: NSAttributedString) -> NSAttributedString {
+public func monospacedNumbers(_ attributedString: NSAttributedString) -> NSAttributedString {
     if let result = attributedString.mutableCopy() as? NSMutableAttributedString {
-        if let font = attributedString.attributesAtIndex(0, effectiveRange: nil)[NSFontAttributeName] as? UIFont {
+        if let font = attributedString.attributes(at: 0, effectiveRange: nil)[NSFontAttributeName] as? UIFont {
             let range = NSMakeRange(0, attributedString.length)
             result.addAttribute(NSFontAttributeName, value: font.fontWithMonospacedNumbers(), range: range)
         }
@@ -92,9 +92,9 @@ public func monospacedNumbers(attributedString: NSAttributedString) -> NSAttribu
     return attributedString
 }
 
-public func smallCaps(attributedString: NSAttributedString) -> NSAttributedString {
+public func smallCaps(_ attributedString: NSAttributedString) -> NSAttributedString {
     if let result = attributedString.mutableCopy() as? NSMutableAttributedString {
-        let attributes = attributedString.attributesAtIndex(0, effectiveRange: nil)
+        let attributes = attributedString.attributes(at: 0, effectiveRange: nil)
         if let font = attributes[NSFontAttributeName] as? UIFont {
             let range = NSMakeRange(0, attributedString.length)
             if font.supportsSmallCaps {
@@ -108,6 +108,6 @@ public func smallCaps(attributedString: NSAttributedString) -> NSAttributedStrin
     return attributedString
 }
 
-public func lineBreak(context: NSAttributedString, attributedString: NSAttributedString) -> NSAttributedString {
-    return NSAttributedString(string: "\n", attributes: context.attributesAtIndex(context.length - 1, effectiveRange: nil))
+public func lineBreak(_ context: NSAttributedString, attributedString: NSAttributedString) -> NSAttributedString {
+    return NSAttributedString(string: "\n", attributes: context.attributes(at: context.length - 1, effectiveRange: nil))
 }

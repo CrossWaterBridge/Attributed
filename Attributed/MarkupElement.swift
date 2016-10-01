@@ -33,14 +33,14 @@ public struct MarkupElement {
 }
 
 public func ~= (pattern: String, element: MarkupElement) -> Bool {
-    let scanner = NSScanner(string: pattern)
+    let scanner = Scanner(string: pattern)
     scanner.charactersToBeSkipped = nil
     
     var name: NSString?
-    if scanner.scanUpToString(".", intoString: &name), let name = name where name == element.name {
-        if scanner.scanString(".", intoString: nil) {
+    if scanner.scanUpTo(".", into: &name), let name = name as? String, name == element.name {
+        if scanner.scanString(".", into: nil) {
             var className: NSString?
-            if scanner.scanUpToString("", intoString: &className), let className = className where element.attributes["class"] == className {
+            if scanner.scanUpTo("", into: &className), let className = className as? String, let elementClassName = element.attributes["class"], elementClassName == className {
                 return true
             }
         } else {

@@ -24,15 +24,15 @@ import UIKit
 
 extension UIFont {
     func fontWithBold() -> UIFont {
-        return fontDescriptor().fontDescriptorWithSymbolicTraits(fontDescriptor().symbolicTraits.union(.TraitBold)).flatMap { UIFont(descriptor: $0, size: pointSize) } ?? self
+        return fontDescriptor.withSymbolicTraits(fontDescriptor.symbolicTraits.union(.traitBold)).flatMap { UIFont(descriptor: $0, size: pointSize) } ?? self
     }
     
     func fontWithItalic() -> UIFont {
-        return fontDescriptor().fontDescriptorWithSymbolicTraits(fontDescriptor().symbolicTraits.union(.TraitItalic)).flatMap { UIFont(descriptor: $0, size: pointSize) } ?? self
+        return fontDescriptor.withSymbolicTraits(fontDescriptor.symbolicTraits.union(.traitItalic)).flatMap { UIFont(descriptor: $0, size: pointSize) } ?? self
     }
     
     func fontWithMonospacedNumbers() -> UIFont {
-        return UIFont(descriptor: fontDescriptor().fontDescriptorByAddingAttributes([
+        return UIFont(descriptor: fontDescriptor.addingAttributes([
             UIFontDescriptorFeatureSettingsAttribute: [
                 [
                     UIFontFeatureTypeIdentifierKey: kNumberSpacingType,
@@ -52,7 +52,7 @@ extension UIFont {
     }
     
     func fontWithSmallCaps() -> UIFont {
-        return UIFont(descriptor: fontDescriptor().fontDescriptorByAddingAttributes([
+        return UIFont(descriptor: fontDescriptor.addingAttributes([
             UIFontDescriptorFeatureSettingsAttribute: [
                 [
                     UIFontFeatureTypeIdentifierKey: kLowerCaseType,

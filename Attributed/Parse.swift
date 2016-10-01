@@ -23,9 +23,9 @@
 import UIKit
 
 extension NSAttributedString {
-    public static func attributedStringFromMarkup(markup: String, withModifier modifier: Modifier) -> NSAttributedString? {
-        if let data = "<xml>\(markup)</xml>".dataUsingEncoding(NSUTF8StringEncoding) {
-            let parser = NSXMLParser(data: data)
+    public static func attributedStringFromMarkup(_ markup: String, withModifier modifier: @escaping Modifier) -> NSAttributedString? {
+        if let data = "<xml>\(markup)</xml>".data(using: .utf8) {
+            let parser = XMLParser(data: data)
             let parserDelegate = ParserDelegate(modifier: modifier)
             parser.delegate = parserDelegate
             parser.parse()
@@ -36,7 +36,7 @@ extension NSAttributedString {
     }
 }
 
-private class ParserDelegate: NSObject, NSXMLParserDelegate {
+private class ParserDelegate: NSObject, XMLParserDelegate {
     let result = NSMutableAttributedString()
     
     let modifier: Modifier
@@ -44,12 +44,12 @@ private class ParserDelegate: NSObject, NSXMLParserDelegate {
     var lastIndex = 0
     var stack = [MarkupElement]()
     
-    init(modifier: Modifier) {
+    init(modifier: @escaping Modifier) {
         self.modifier = modifier
     }
     
     @objc
-    func parser(parser: NSXMLParser, didStartElement elementName: String, namespaceURI: String?, qualifiedName qName: String?, attributes attributeDict: [String : String]) {
+    func parser(_ parser: XMLParser, didStartElement elementName: String, namespaceURI: String?, qualifiedName qName: String?, attributes attributeDict: [String : String]) {
         let range = NSMakeRange(lastIndex, result.length - lastIndex)
         modifyInRange(range)
         
@@ -58,7 +58,7 @@ private class ParserDelegate: NSObject, NSXMLParserDelegate {
     }
     
     @objc
-    func parser(parser: NSXMLParser, didEndElement elementName: String, namespaceURI: String?, qualifiedName qName: String?) {
+    func parser(_ parser: XMLParser, didEndElement elementName: String, namespaceURI: String?, qualifiedName qName: String?) {
         let range = NSMakeRange(lastIndex, result.length - lastIndex)
         modifyInRange(range)
         
@@ -67,13 +67,13 @@ private class ParserDelegate: NSObject, NSXMLParserDelegate {
     }
     
     @objc
-    func parser(parser: NSXMLParser, foundCharacters string: String) {
-        result.appendAttributedString(NSAttributedString(string: string))
+    func parser(_ parser: XMLParser, foundCharacters string: String) {
+        result.append(NSAttributedString(string: string))
     }
     
-    func modifyInRange(range: NSRange) {
+    func modifyInRange(_ range: NSRange) {
         if !stack.isEmpty {
-            modifier(mutableAttributedString: result, range: range, stack: Array(stack[1..<stack.count]))
+            modifier(result, range, Array(stack[1..<stack.count]))
         }
     }
 }
