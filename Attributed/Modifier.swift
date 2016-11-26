@@ -97,8 +97,8 @@ public func smallCaps(_ attributedString: NSAttributedString) -> NSAttributedStr
         let attributes = attributedString.attributes(at: 0, effectiveRange: nil)
         if let font = attributes[NSFontAttributeName] as? UIFont {
             let range = NSMakeRange(0, attributedString.length)
-            if font.supportsSmallCaps {
-                result.addAttribute(NSFontAttributeName, value: font.fontWithSmallCaps(), range: range)
+            if font.supportsSmallCaps, let smallCapsFont = font.fontWithSmallCaps() {
+                result.addAttribute(NSFontAttributeName, value: smallCapsFont, range: range)
             } else {
                 result.simulateSmallCapsInRange(range, withFont: font, attributes: attributes)
             }

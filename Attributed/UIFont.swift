@@ -32,33 +32,48 @@ extension UIFont {
     }
     
     func fontWithMonospacedNumbers() -> UIFont {
-        return UIFont(descriptor: fontDescriptor.addingAttributes([
-            UIFontDescriptorFeatureSettingsAttribute: [
-                [
-                    UIFontFeatureTypeIdentifierKey: kNumberSpacingType,
-                    UIFontFeatureSelectorIdentifierKey: kMonospacedNumbersSelector,
-                ],
-            ],
-            ]), size: pointSize)
+        #if os(watchOS)
+            return UIFont.monospacedDigitSystemFont(ofSize: pointSize, weight: 0)
+        #else
+            if #available(iOS 9.0, *) {
+                return UIFont.monospacedDigitSystemFont(ofSize: pointSize, weight: 0)
+            } else {
+                return UIFont(descriptor: fontDescriptor.addingAttributes([
+                    UIFontDescriptorFeatureSettingsAttribute: [
+                        [
+                            UIFontFeatureTypeIdentifierKey: kNumberSpacingType,
+                            UIFontFeatureSelectorIdentifierKey: kMonospacedNumbersSelector,
+                            ],
+                    ],
+                ]), size: pointSize)
+            }
+        #endif
     }
     
     var supportsSmallCaps: Bool {
-        for feature in CTFontCopyFeatures(self) as NSArray? as? [[String: AnyObject]] ?? [] where feature[kCTFontFeatureTypeIdentifierKey as String] as? Int == kLowerCaseType {
-            for featureSelector in feature[kCTFontFeatureTypeSelectorsKey as String] as? [[String: AnyObject]] ?? [] where featureSelector[kCTFontFeatureSelectorIdentifierKey as String] as? Int == kLowerCaseSmallCapsSelector {
-                return true
+        #if os(iOS)
+            for feature in CTFontCopyFeatures(self) as NSArray? as? [[String: AnyObject]] ?? [] where feature[kCTFontFeatureTypeIdentifierKey as String] as? Int == kLowerCaseType {
+                for featureSelector in feature[kCTFontFeatureTypeSelectorsKey as String] as? [[String: AnyObject]] ?? [] where featureSelector[kCTFontFeatureSelectorIdentifierKey as String] as? Int == kLowerCaseSmallCapsSelector {
+                    return true
+                }
             }
-        }
+        #endif
+        
         return false
     }
     
-    func fontWithSmallCaps() -> UIFont {
-        return UIFont(descriptor: fontDescriptor.addingAttributes([
-            UIFontDescriptorFeatureSettingsAttribute: [
-                [
-                    UIFontFeatureTypeIdentifierKey: kLowerCaseType,
-                    UIFontFeatureSelectorIdentifierKey: kLowerCaseSmallCapsSelector,
+    func fontWithSmallCaps() -> UIFont? {
+        #if os(iOS)
+            return UIFont(descriptor: fontDescriptor.addingAttributes([
+                UIFontDescriptorFeatureSettingsAttribute: [
+                    [
+                        UIFontFeatureTypeIdentifierKey: kLowerCaseType,
+                        UIFontFeatureSelectorIdentifierKey: kLowerCaseSmallCapsSelector,
+                    ],
                 ],
-            ],
-        ]), size: pointSize)
+            ]), size: pointSize)
+        #else
+            return nil
+        #endif
     }
 }
