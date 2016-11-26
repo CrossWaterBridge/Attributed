@@ -43,7 +43,7 @@ extension UIFont {
                         [
                             UIFontFeatureTypeIdentifierKey: kNumberSpacingType,
                             UIFontFeatureSelectorIdentifierKey: kMonospacedNumbersSelector,
-                            ],
+                        ],
                     ],
                 ]), size: pointSize)
             }
