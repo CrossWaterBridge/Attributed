@@ -37,10 +37,10 @@ public func ~= (pattern: String, element: MarkupElement) -> Bool {
     scanner.charactersToBeSkipped = nil
     
     var name: NSString?
-    if scanner.scanUpTo(".", into: &name), let name = name as? String, name == element.name {
+    if scanner.scanUpTo(".", into: &name), let name = name as String?, name == element.name {
         if scanner.scanString(".", into: nil) {
             var className: NSString?
-            if scanner.scanUpTo("", into: &className), let className = className as? String, let elementClassName = element.attributes["class"], elementClassName == className {
+            if scanner.scanUpTo("", into: &className), let className = className as String?, let elementClassName = element.attributes["class"], elementClassName == className {
                 return true
             }
         } else {

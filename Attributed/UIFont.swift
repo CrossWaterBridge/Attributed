@@ -33,7 +33,7 @@ extension UIFont {
     
     func fontWithMonospacedNumbers() -> UIFont {
         #if os(watchOS)
-            return UIFont.monospacedDigitSystemFont(ofSize: pointSize, weight: 0)
+            return UIFont.monospacedDigitSystemFont(ofSize: pointSize, weight: UIFont.Weight(rawValue: 0))
         #else
             if #available(iOS 9.0, *) {
                 return UIFont.monospacedDigitSystemFont(ofSize: pointSize, weight: UIFont.Weight(rawValue: 0))
