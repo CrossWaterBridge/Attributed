@@ -24,11 +24,11 @@ import UIKit
 
 extension NSMutableAttributedString {
     
-    public func simulateSmallCapsInRange(_ range: NSRange, withFont font: UIFont, attributes: [String: Any]) {
+    public func simulateSmallCapsInRange(_ range: NSRange, withFont font: UIFont, attributes: [NSAttributedStringKey: Any]) {
         let replacement = NSMutableAttributedString()
         
         var smallAttributes = attributes
-        smallAttributes[NSFontAttributeName] = font.withSize(ceil(font.pointSize * 1.1 * font.xHeight / font.capHeight))
+        smallAttributes[NSAttributedStringKey.font] = font.withSize(ceil(font.pointSize * 1.1 * font.xHeight / font.capHeight))
         
         let lowercaseCharacterSet = CharacterSet.lowercaseLetters
         

@@ -24,7 +24,7 @@ import UIKit
 
 public typealias Modifier = (_ mutableAttributedString: NSMutableAttributedString, _ range: NSRange, _ stack: [MarkupElement]) -> Void
 
-public func modifierWithBaseAttributes(_ attributes: [String: Any], modifiers: [Modifier]) -> Modifier {
+public func modifierWithBaseAttributes(_ attributes: [NSAttributedStringKey: Any], modifiers: [Modifier]) -> Modifier {
     return { mutableAttributedString, range, stack in
         mutableAttributedString.addAttributes(attributes, range: range)
         for modifier in modifiers {
@@ -61,9 +61,9 @@ public func selectMap(_ selector: String, _ mapWithContext: @escaping MapWithCon
 
 public func bold(_ attributedString: NSAttributedString) -> NSAttributedString {
     if let result = attributedString.mutableCopy() as? NSMutableAttributedString {
-        if let font = attributedString.attributes(at: 0, effectiveRange: nil)[NSFontAttributeName] as? UIFont {
+        if let font = attributedString.attributes(at: 0, effectiveRange: nil)[NSAttributedStringKey.font] as? UIFont {
             let range = NSMakeRange(0, attributedString.length)
-            result.addAttribute(NSFontAttributeName, value: font.fontWithBold(), range: range)
+            result.addAttribute(NSAttributedStringKey.font, value: font.fontWithBold(), range: range)
         }
         return result
     }
@@ -72,9 +72,9 @@ public func bold(_ attributedString: NSAttributedString) -> NSAttributedString {
 
 public func italic(_ attributedString: NSAttributedString) -> NSAttributedString {
     if let result = attributedString.mutableCopy() as? NSMutableAttributedString {
-        if let font = attributedString.attributes(at: 0, effectiveRange: nil)[NSFontAttributeName] as? UIFont {
+        if let font = attributedString.attributes(at: 0, effectiveRange: nil)[NSAttributedStringKey.font] as? UIFont {
             let range = NSMakeRange(0, attributedString.length)
-            result.addAttribute(NSFontAttributeName, value: font.fontWithItalic(), range: range)
+            result.addAttribute(NSAttributedStringKey.font, value: font.fontWithItalic(), range: range)
         }
         return result
     }
@@ -83,9 +83,9 @@ public func italic(_ attributedString: NSAttributedString) -> NSAttributedString
 
 public func monospacedNumbers(_ attributedString: NSAttributedString) -> NSAttributedString {
     if let result = attributedString.mutableCopy() as? NSMutableAttributedString {
-        if let font = attributedString.attributes(at: 0, effectiveRange: nil)[NSFontAttributeName] as? UIFont {
+        if let font = attributedString.attributes(at: 0, effectiveRange: nil)[NSAttributedStringKey.font] as? UIFont {
             let range = NSMakeRange(0, attributedString.length)
-            result.addAttribute(NSFontAttributeName, value: font.fontWithMonospacedNumbers(), range: range)
+            result.addAttribute(NSAttributedStringKey.font, value: font.fontWithMonospacedNumbers(), range: range)
         }
         return result
     }
@@ -95,10 +95,10 @@ public func monospacedNumbers(_ attributedString: NSAttributedString) -> NSAttri
 public func smallCaps(_ attributedString: NSAttributedString) -> NSAttributedString {
     if let result = attributedString.mutableCopy() as? NSMutableAttributedString {
         let attributes = attributedString.attributes(at: 0, effectiveRange: nil)
-        if let font = attributes[NSFontAttributeName] as? UIFont {
+        if let font = attributes[NSAttributedStringKey.font] as? UIFont {
             let range = NSMakeRange(0, attributedString.length)
             if font.supportsSmallCaps, let smallCapsFont = font.fontWithSmallCaps() {
-                result.addAttribute(NSFontAttributeName, value: smallCapsFont, range: range)
+                result.addAttribute(NSAttributedStringKey.font, value: smallCapsFont, range: range)
             } else {
                 result.simulateSmallCapsInRange(range, withFont: font, attributes: attributes)
             }
