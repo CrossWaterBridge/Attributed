@@ -24,7 +24,7 @@ import XCTest
 @testable import Attributed
 
 private let baseFont = UIFont.systemFont(ofSize: 10)
-private let modifier: Modifier = modifierWithBaseAttributes([NSAttributedStringKey.font: baseFont], modifiers: [
+private let modifier: Modifier = modifierWithBaseAttributes([NSAttributedString.Key.font: baseFont], modifiers: [
     selectMap("strong", bold),
     selectMap("br", lineBreak)
 ])
@@ -38,21 +38,21 @@ class AttributedTests: XCTestCase {
     
     func testPlainText() {
         let actual = NSAttributedString.attributedStringFromMarkup("puppy", withModifier: modifier)
-        let expected = NSAttributedString(string: "puppy", attributes: [NSAttributedStringKey.font: baseFont])
+        let expected = NSAttributedString(string: "puppy", attributes: [NSAttributedString.Key.font: baseFont])
         XCTAssertEqual(actual, expected)
     }
     
     func testElement() {
         let actual = NSAttributedString.attributedStringFromMarkup("kittens <strong>and</strong> puppies", withModifier: modifier)
-        let expected = NSMutableAttributedString(string: "kittens ", attributes: [NSAttributedStringKey.font: baseFont])
-        expected.append(NSAttributedString(string: "and", attributes: [NSAttributedStringKey.font: baseFont.fontWithBold()]))
-        expected.append(NSAttributedString(string: " puppies", attributes: [NSAttributedStringKey.font: baseFont]))
+        let expected = NSMutableAttributedString(string: "kittens ", attributes: [NSAttributedString.Key.font: baseFont])
+        expected.append(NSAttributedString(string: "and", attributes: [NSAttributedString.Key.font: baseFont.fontWithBold()]))
+        expected.append(NSAttributedString(string: " puppies", attributes: [NSAttributedString.Key.font: baseFont]))
         XCTAssertEqual(actual, expected)
     }
     
     func testLineBreak() {
         let actual = NSAttributedString.attributedStringFromMarkup("kittens<br/>puppies", withModifier: modifier)
-        let expected = NSAttributedString(string: "kittens\npuppies", attributes: [NSAttributedStringKey.font: baseFont])
+        let expected = NSAttributedString(string: "kittens\npuppies", attributes: [NSAttributedString.Key.font: baseFont])
         XCTAssertEqual(actual, expected)
     }
 }
