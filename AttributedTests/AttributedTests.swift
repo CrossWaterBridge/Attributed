@@ -26,8 +26,16 @@ import XCTest
 private let baseFont = UIFont.systemFont(ofSize: 10)
 private let modifier: Modifier = modifierWithBaseAttributes([NSAttributedString.Key.font: baseFont], modifiers: [
     selectMap("strong", bold),
-    selectMap("br", lineBreak)
+    selectMap("br", lineBreak),
+    selectMapBefore("before", marker),
+    selectMapAfter("after", marker)
 ])
+private func marker(_ context: NSAttributedString, _ attributedString: NSAttributedString) -> NSAttributedString {
+    guard let result = attributedString.mutableCopy() as? NSMutableAttributedString else { return attributedString }
+
+    result.insert(NSAttributedString(string: "\n", attributes: context.attributes(at: context.length - 1, effectiveRange: nil)), at: attributedString.length)
+    return result
+}
 
 class AttributedTests: XCTestCase {
     func testEmpty() {
@@ -49,10 +57,22 @@ class AttributedTests: XCTestCase {
         expected.append(NSAttributedString(string: " puppies", attributes: [NSAttributedString.Key.font: baseFont]))
         XCTAssertEqual(actual, expected)
     }
-    
+
     func testLineBreak() {
         let actual = NSAttributedString.attributedStringFromMarkup("kittens<br/>puppies", withModifier: modifier)
         let expected = NSAttributedString(string: "kittens\npuppies", attributes: [NSAttributedString.Key.font: baseFont])
+        XCTAssertEqual(actual, expected)
+    }
+
+    func testBefore() {
+        let actual = NSAttributedString.attributedStringFromMarkup("bunnies<before>kittens</before>puppies", withModifier: modifier)
+        let expected = NSAttributedString(string: "bunnies\nkittenspuppies", attributes: [NSAttributedString.Key.font: baseFont])
+        XCTAssertEqual(actual, expected)
+    }
+
+    func testAfter() {
+        let actual = NSAttributedString.attributedStringFromMarkup("bunnies<after>kittens</after>puppies", withModifier: modifier)
+        let expected = NSAttributedString(string: "bunnieskittens\npuppies", attributes: [NSAttributedString.Key.font: baseFont])
         XCTAssertEqual(actual, expected)
     }
 }

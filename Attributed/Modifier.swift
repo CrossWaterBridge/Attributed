@@ -22,13 +22,13 @@
 
 import UIKit
 
-public typealias Modifier = (_ mutableAttributedString: NSMutableAttributedString, _ range: NSRange, _ stack: [MarkupElement]) -> Void
+public typealias Modifier = (_ mutableAttributedString: NSMutableAttributedString, _ range: NSRange, _ stack: [MarkupElement], _ startElement: MarkupElement?) -> Void
 
 public func modifierWithBaseAttributes(_ attributes: [NSAttributedString.Key: Any], modifiers: [Modifier]) -> Modifier {
-    return { mutableAttributedString, range, stack in
+    return { mutableAttributedString, range, stack, startElement in
         mutableAttributedString.addAttributes(attributes, range: range)
         for modifier in modifiers {
-            modifier(mutableAttributedString, range, stack)
+            modifier(mutableAttributedString, range, stack, startElement)
         }
     }
 }
@@ -36,7 +36,7 @@ public func modifierWithBaseAttributes(_ attributes: [NSAttributedString.Key: An
 public typealias Map = (NSAttributedString) -> NSAttributedString
 
 public func selectMap(_ selector: String, _ map: @escaping Map) -> Modifier {
-    return { mutableAttributedString, range, stack in
+    return { mutableAttributedString, range, stack, _ in
         for element in stack {
             if selector ~= element {
                 let attributedString = mutableAttributedString.attributedSubstring(from: range)
@@ -46,15 +46,51 @@ public func selectMap(_ selector: String, _ map: @escaping Map) -> Modifier {
     }
 }
 
+public func selectMapBefore(_ selector: String, _ map: @escaping Map) -> Modifier {
+    return { mutableAttributedString, range, stack, startElement in
+        if let element = startElement, selector ~= element {
+            let attributedString = mutableAttributedString.attributedSubstring(from: range)
+            mutableAttributedString.replaceCharacters(in: range, with: map(attributedString))
+        }
+    }
+}
+
+public func selectMapAfter(_ selector: String, _ map: @escaping Map) -> Modifier {
+    return { mutableAttributedString, range, stack, startElement in
+        if startElement == nil, let element = stack.last, selector ~= element {
+            let attributedString = mutableAttributedString.attributedSubstring(from: range)
+            mutableAttributedString.replaceCharacters(in: range, with: map(attributedString))
+        }
+    }
+}
+
 public typealias MapWithContext = (NSAttributedString, NSAttributedString) -> NSAttributedString
 
 public func selectMap(_ selector: String, _ mapWithContext: @escaping MapWithContext) -> Modifier {
-    return { mutableAttributedString, range, stack in
+    return { mutableAttributedString, range, stack, _ in
         for element in stack {
             if selector ~= element {
                 let attributedString = mutableAttributedString.attributedSubstring(from: range)
                 mutableAttributedString.replaceCharacters(in: range, with: mapWithContext(mutableAttributedString, attributedString))
             }
+        }
+    }
+}
+
+public func selectMapBefore(_ selector: String, _ mapWithContext: @escaping MapWithContext) -> Modifier {
+    return { mutableAttributedString, range, stack, startElement in
+        if let element = startElement, selector ~= element {
+            let attributedString = mutableAttributedString.attributedSubstring(from: range)
+            mutableAttributedString.replaceCharacters(in: range, with: mapWithContext(mutableAttributedString, attributedString))
+        }
+    }
+}
+
+public func selectMapAfter(_ selector: String, _ mapWithContext: @escaping MapWithContext) -> Modifier {
+    return { mutableAttributedString, range, stack, startElement in
+        if startElement == nil, let element = stack.last, selector ~= element {
+            let attributedString = mutableAttributedString.attributedSubstring(from: range)
+            mutableAttributedString.replaceCharacters(in: range, with: mapWithContext(mutableAttributedString, attributedString))
         }
     }
 }
