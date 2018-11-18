@@ -32,8 +32,8 @@ let html = "Waltz, <em>bad nymph</em>, for quick jigs <span class=\"bold\">vex</
 
 let baseFont = UIFont.preferredFont(forTextStyle: .body)
 let modifier = modifierWithBaseAttributes([NSAttributedString.Key.font: baseFont], modifiers: [
-	selectMap("em", italic),
-	selectMap("span.bold", bold),
+	selectMap("em", Modifiers.italic),
+	selectMap("span.bold", Modifiers.bold),
 ])
 
 let attributedString = NSAttributedString.attributedStringFromMarkup(html, withModifier: modifier)

@@ -15,6 +15,7 @@
 		D98DCCC51C18A514004BFDB8 /* Modifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = D98DCCC41C18A514004BFDB8 /* Modifier.swift */; };
 		D98DCCC71C18A6E2004BFDB8 /* UIFont.swift in Sources */ = {isa = PBXBuildFile; fileRef = D98DCCC61C18A6E2004BFDB8 /* UIFont.swift */; };
 		D98DCCC91C18A805004BFDB8 /* MarkupElement.swift in Sources */ = {isa = PBXBuildFile; fileRef = D98DCCC81C18A805004BFDB8 /* MarkupElement.swift */; };
+		D994817521A0FA7A0059E516 /* Modifiers.swift in Sources */ = {isa = PBXBuildFile; fileRef = D994817421A0FA7A0059E516 /* Modifiers.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -39,6 +40,7 @@
 		D98DCCC41C18A514004BFDB8 /* Modifier.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Modifier.swift; sourceTree = "<group>"; };
 		D98DCCC61C18A6E2004BFDB8 /* UIFont.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIFont.swift; sourceTree = "<group>"; };
 		D98DCCC81C18A805004BFDB8 /* MarkupElement.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MarkupElement.swift; sourceTree = "<group>"; };
+		D994817421A0FA7A0059E516 /* Modifiers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Modifiers.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -85,6 +87,7 @@
 				D98DCCC81C18A805004BFDB8 /* MarkupElement.swift */,
 				D98DCCC21C17BC18004BFDB8 /* SmallCaps.swift */,
 				D98DCCC41C18A514004BFDB8 /* Modifier.swift */,
+				D994817421A0FA7A0059E516 /* Modifiers.swift */,
 				D98DCCC61C18A6E2004BFDB8 /* UIFont.swift */,
 				D98DCCA91C17BAE2004BFDB8 /* Attributed.h */,
 				D98DCCAB1C17BAE2004BFDB8 /* Info.plist */,
@@ -215,6 +218,7 @@
 				D98DCCC91C18A805004BFDB8 /* MarkupElement.swift in Sources */,
 				D98DCCC11C17BC11004BFDB8 /* Parse.swift in Sources */,
 				D98DCCC31C17BC18004BFDB8 /* SmallCaps.swift in Sources */,
+				D994817521A0FA7A0059E516 /* Modifiers.swift in Sources */,
 				D98DCCC51C18A514004BFDB8 /* Modifier.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

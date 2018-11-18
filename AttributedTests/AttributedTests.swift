@@ -25,16 +25,23 @@ import XCTest
 
 private let baseFont = UIFont.systemFont(ofSize: 10)
 private let modifier: Modifier = modifierWithBaseAttributes([NSAttributedString.Key.font: baseFont], modifiers: [
-    selectMap("strong", bold),
-    selectMap("br", lineBreak),
-    selectMapBefore("before", marker),
-    selectMapAfter("after", marker)
+    selectMap("regular", Modifiers.regular),
+    selectMap("strong", Modifiers.bold),
+    selectMap("p", Modifiers.para),
+    selectMap("br", Modifiers.lineBreak),
+    selectMapBefore("before", TestModifiers.marker),
+    selectMapAfter("after", TestModifiers.marker),
+    selectMap("widont", Modifiers.widont)
 ])
-private func marker(_ context: NSAttributedString, _ attributedString: NSAttributedString) -> NSAttributedString {
-    guard let result = attributedString.mutableCopy() as? NSMutableAttributedString else { return attributedString }
 
-    result.insert(NSAttributedString(string: "\n", attributes: context.attributes(at: context.length - 1, effectiveRange: nil)), at: attributedString.length)
-    return result
+private enum TestModifiers {
+    static func marker(_ context: NSAttributedString, _ attributedString: NSAttributedString) -> NSAttributedString {
+        guard context.length > 0,
+            let result = attributedString.mutableCopy() as? NSMutableAttributedString else { return attributedString }
+
+        result.insert(NSAttributedString(string: "\n", attributes: context.attributes(at: context.length - 1, effectiveRange: nil)), at: attributedString.length)
+        return result
+    }
 }
 
 class AttributedTests: XCTestCase {
@@ -58,6 +65,12 @@ class AttributedTests: XCTestCase {
         XCTAssertEqual(actual, expected)
     }
 
+    func testPara() {
+        let actual = NSAttributedString.attributedStringFromMarkup("<p>kittens</p>puppies", withModifier: modifier)
+        let expected = NSAttributedString(string: "kittens\npuppies", attributes: [NSAttributedString.Key.font: baseFont])
+        XCTAssertEqual(actual, expected)
+    }
+
     func testLineBreak() {
         let actual = NSAttributedString.attributedStringFromMarkup("kittens<br/>puppies", withModifier: modifier)
         let expected = NSAttributedString(string: "kittens\npuppies", attributes: [NSAttributedString.Key.font: baseFont])
@@ -73,6 +86,19 @@ class AttributedTests: XCTestCase {
     func testAfter() {
         let actual = NSAttributedString.attributedStringFromMarkup("bunnies<after>kittens</after>puppies", withModifier: modifier)
         let expected = NSAttributedString(string: "bunnieskittens\npuppies", attributes: [NSAttributedString.Key.font: baseFont])
+        XCTAssertEqual(actual, expected)
+    }
+
+    func testOrder() {
+        let actual = NSAttributedString.attributedStringFromMarkup("<strong>kittens<regular>puppies</regular></strong>", withModifier: modifier)
+        let expected = NSMutableAttributedString(string: "kittens", attributes: [NSAttributedString.Key.font: baseFont.fontWithBold()])
+        expected.append(NSAttributedString(string: "puppies", attributes: [NSAttributedString.Key.font: baseFont]))
+        XCTAssertEqual(actual, expected)
+    }
+
+    func testWidont() {
+        let actual = NSAttributedString.attributedStringFromMarkup("<widont><p>bunnies, kittens, and puppies</p></widont>", withModifier: modifier)
+        let expected = NSAttributedString(string: "bunnies, kittens, and\u{00a0}puppies\n", attributes: [NSAttributedString.Key.font: baseFont])
         XCTAssertEqual(actual, expected)
     }
 }

@@ -20,7 +20,7 @@
 // THE SOFTWARE.
 //
 
-import UIKit
+import Foundation
 
 extension NSAttributedString {
     public static func attributedStringFromMarkup(_ markup: String, withModifier modifier: @escaping Modifier) -> NSAttributedString? {
@@ -48,8 +48,7 @@ private class ParserDelegate: NSObject, XMLParserDelegate {
         self.modifier = modifier
     }
     
-    @objc
-    func parser(_ parser: XMLParser, didStartElement elementName: String, namespaceURI: String?, qualifiedName qName: String?, attributes attributeDict: [String : String]) {
+    @objc func parser(_ parser: XMLParser, didStartElement elementName: String, namespaceURI: String?, qualifiedName qName: String?, attributes attributeDict: [String : String]) {
         let range = NSMakeRange(lastIndex, result.length - lastIndex)
         let startElement = MarkupElement(name: elementName, attributes: attributeDict)
         modify(in: range, startElement: startElement)
@@ -58,8 +57,7 @@ private class ParserDelegate: NSObject, XMLParserDelegate {
         stack.append(startElement)
     }
     
-    @objc
-    func parser(_ parser: XMLParser, didEndElement elementName: String, namespaceURI: String?, qualifiedName qName: String?) {
+    @objc func parser(_ parser: XMLParser, didEndElement elementName: String, namespaceURI: String?, qualifiedName qName: String?) {
         let range = NSMakeRange(lastIndex, result.length - lastIndex)
         modify(in: range, startElement: nil)
         
@@ -67,8 +65,7 @@ private class ParserDelegate: NSObject, XMLParserDelegate {
         stack.removeLast()
     }
     
-    @objc
-    func parser(_ parser: XMLParser, foundCharacters string: String) {
+    @objc func parser(_ parser: XMLParser, foundCharacters string: String) {
         result.append(NSAttributedString(string: string))
     }
     

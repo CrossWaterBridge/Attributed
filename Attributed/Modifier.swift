@@ -20,15 +20,19 @@
 // THE SOFTWARE.
 //
 
-import UIKit
+import Foundation
 
 public typealias Modifier = (_ mutableAttributedString: NSMutableAttributedString, _ range: NSRange, _ stack: [MarkupElement], _ startElement: MarkupElement?) -> Void
 
 public func modifierWithBaseAttributes(_ attributes: [NSAttributedString.Key: Any], modifiers: [Modifier]) -> Modifier {
     return { mutableAttributedString, range, stack, startElement in
         mutableAttributedString.addAttributes(attributes, range: range)
-        for modifier in modifiers {
-            modifier(mutableAttributedString, range, stack, startElement)
+
+        for count in 0...stack.count {
+            let localStack = Array(stack[0..<count])
+            for modifier in modifiers {
+                modifier(mutableAttributedString, range, localStack, startElement)
+            }
         }
     }
 }
@@ -37,30 +41,28 @@ public typealias Map = (NSAttributedString) -> NSAttributedString
 
 public func selectMap(_ selector: String, _ map: @escaping Map) -> Modifier {
     return { mutableAttributedString, range, stack, _ in
-        for element in stack {
-            if selector ~= element {
-                let attributedString = mutableAttributedString.attributedSubstring(from: range)
-                mutableAttributedString.replaceCharacters(in: range, with: map(attributedString))
-            }
-        }
+        guard let element = stack.last, selector ~= element else { return }
+
+        let attributedString = mutableAttributedString.attributedSubstring(from: range)
+        mutableAttributedString.replaceCharacters(in: range, with: map(attributedString))
     }
 }
 
 public func selectMapBefore(_ selector: String, _ map: @escaping Map) -> Modifier {
     return { mutableAttributedString, range, stack, startElement in
-        if let element = startElement, selector ~= element {
-            let attributedString = mutableAttributedString.attributedSubstring(from: range)
-            mutableAttributedString.replaceCharacters(in: range, with: map(attributedString))
-        }
+        guard let element = startElement, selector ~= element else { return }
+
+        let attributedString = mutableAttributedString.attributedSubstring(from: range)
+        mutableAttributedString.replaceCharacters(in: range, with: map(attributedString))
     }
 }
 
 public func selectMapAfter(_ selector: String, _ map: @escaping Map) -> Modifier {
     return { mutableAttributedString, range, stack, startElement in
-        if startElement == nil, let element = stack.last, selector ~= element {
-            let attributedString = mutableAttributedString.attributedSubstring(from: range)
-            mutableAttributedString.replaceCharacters(in: range, with: map(attributedString))
-        }
+        guard startElement == nil, let element = stack.last, selector ~= element else { return }
+
+        let attributedString = mutableAttributedString.attributedSubstring(from: range)
+        mutableAttributedString.replaceCharacters(in: range, with: map(attributedString))
     }
 }
 
@@ -68,82 +70,27 @@ public typealias MapWithContext = (NSAttributedString, NSAttributedString) -> NS
 
 public func selectMap(_ selector: String, _ mapWithContext: @escaping MapWithContext) -> Modifier {
     return { mutableAttributedString, range, stack, _ in
-        for element in stack {
-            if selector ~= element {
-                let attributedString = mutableAttributedString.attributedSubstring(from: range)
-                mutableAttributedString.replaceCharacters(in: range, with: mapWithContext(mutableAttributedString, attributedString))
-            }
-        }
+        guard let element = stack.last, selector ~= element else { return }
+
+        let attributedString = mutableAttributedString.attributedSubstring(from: range)
+        mutableAttributedString.replaceCharacters(in: range, with: mapWithContext(mutableAttributedString, attributedString))
     }
 }
 
 public func selectMapBefore(_ selector: String, _ mapWithContext: @escaping MapWithContext) -> Modifier {
     return { mutableAttributedString, range, stack, startElement in
-        if let element = startElement, selector ~= element {
-            let attributedString = mutableAttributedString.attributedSubstring(from: range)
-            mutableAttributedString.replaceCharacters(in: range, with: mapWithContext(mutableAttributedString, attributedString))
-        }
+        guard let element = startElement, selector ~= element else { return }
+
+        let attributedString = mutableAttributedString.attributedSubstring(from: range)
+        mutableAttributedString.replaceCharacters(in: range, with: mapWithContext(mutableAttributedString, attributedString))
     }
 }
 
 public func selectMapAfter(_ selector: String, _ mapWithContext: @escaping MapWithContext) -> Modifier {
     return { mutableAttributedString, range, stack, startElement in
-        if startElement == nil, let element = stack.last, selector ~= element {
-            let attributedString = mutableAttributedString.attributedSubstring(from: range)
-            mutableAttributedString.replaceCharacters(in: range, with: mapWithContext(mutableAttributedString, attributedString))
-        }
-    }
-}
+        guard startElement == nil, let element = stack.last, selector ~= element else { return }
 
-public func bold(_ attributedString: NSAttributedString) -> NSAttributedString {
-    if let result = attributedString.mutableCopy() as? NSMutableAttributedString {
-        if let font = attributedString.attributes(at: 0, effectiveRange: nil)[NSAttributedString.Key.font] as? UIFont {
-            let range = NSMakeRange(0, attributedString.length)
-            result.addAttribute(NSAttributedString.Key.font, value: font.fontWithBold(), range: range)
-        }
-        return result
+        let attributedString = mutableAttributedString.attributedSubstring(from: range)
+        mutableAttributedString.replaceCharacters(in: range, with: mapWithContext(mutableAttributedString, attributedString))
     }
-    return attributedString
-}
-
-public func italic(_ attributedString: NSAttributedString) -> NSAttributedString {
-    if let result = attributedString.mutableCopy() as? NSMutableAttributedString {
-        if let font = attributedString.attributes(at: 0, effectiveRange: nil)[NSAttributedString.Key.font] as? UIFont {
-            let range = NSMakeRange(0, attributedString.length)
-            result.addAttribute(NSAttributedString.Key.font, value: font.fontWithItalic(), range: range)
-        }
-        return result
-    }
-    return attributedString
-}
-
-public func monospacedNumbers(_ attributedString: NSAttributedString) -> NSAttributedString {
-    if let result = attributedString.mutableCopy() as? NSMutableAttributedString {
-        if let font = attributedString.attributes(at: 0, effectiveRange: nil)[NSAttributedString.Key.font] as? UIFont {
-            let range = NSMakeRange(0, attributedString.length)
-            result.addAttribute(NSAttributedString.Key.font, value: font.fontWithMonospacedNumbers(), range: range)
-        }
-        return result
-    }
-    return attributedString
-}
-
-public func smallCaps(_ attributedString: NSAttributedString) -> NSAttributedString {
-    if let result = attributedString.mutableCopy() as? NSMutableAttributedString {
-        let attributes = attributedString.attributes(at: 0, effectiveRange: nil)
-        if let font = attributes[NSAttributedString.Key.font] as? UIFont {
-            let range = NSMakeRange(0, attributedString.length)
-            if font.supportsSmallCaps, let smallCapsFont = font.fontWithSmallCaps() {
-                result.addAttribute(NSAttributedString.Key.font, value: smallCapsFont, range: range)
-            } else {
-                result.simulateSmallCapsInRange(range, withFont: font, attributes: attributes)
-            }
-        }
-        return result
-    }
-    return attributedString
-}
-
-public func lineBreak(_ context: NSAttributedString, attributedString: NSAttributedString) -> NSAttributedString {
-    return NSAttributedString(string: "\n", attributes: context.attributes(at: context.length - 1, effectiveRange: nil))
 }

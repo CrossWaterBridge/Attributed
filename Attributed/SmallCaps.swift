@@ -23,7 +23,6 @@
 import UIKit
 
 extension NSMutableAttributedString {
-    
     public func simulateSmallCapsInRange(_ range: NSRange, withFont font: UIFont, attributes: [NSAttributedString.Key: Any]) {
         let replacement = NSMutableAttributedString()
         
@@ -46,5 +45,4 @@ extension NSMutableAttributedString {
         
         replaceCharacters(in: range, with: replacement)
     }
-    
 }
