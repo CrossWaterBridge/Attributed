@@ -83,7 +83,7 @@ public enum Modifiers {
         return result
     }
 
-    static func para(_ context: NSAttributedString, _ attributedString: NSAttributedString) -> NSAttributedString {
+    public static func para(_ context: NSAttributedString, _ attributedString: NSAttributedString) -> NSAttributedString {
         guard let result = attributedString.mutableCopy() as? NSMutableAttributedString else { return attributedString }
 
         result.insert(NSAttributedString(string: "\n", attributes: context.attributes(at: context.length - 1, effectiveRange: nil)), at: attributedString.length)

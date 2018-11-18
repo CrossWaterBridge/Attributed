@@ -21,9 +21,10 @@
 //
 
 import XCTest
-@testable import Attributed
+import Attributed
 
 private let baseFont = UIFont.systemFont(ofSize: 10)
+private let boldFont = UIFont.boldSystemFont(ofSize: 10)
 private let modifier: Modifier = modifierWithBaseAttributes([NSAttributedString.Key.font: baseFont], modifiers: [
     selectMap("regular", Modifiers.regular),
     selectMap("strong", Modifiers.bold),
@@ -60,7 +61,7 @@ class AttributedTests: XCTestCase {
     func testElement() {
         let actual = NSAttributedString.attributedStringFromMarkup("kittens <strong>and</strong> puppies", withModifier: modifier)
         let expected = NSMutableAttributedString(string: "kittens ", attributes: [NSAttributedString.Key.font: baseFont])
-        expected.append(NSAttributedString(string: "and", attributes: [NSAttributedString.Key.font: baseFont.fontWithBold()]))
+        expected.append(NSAttributedString(string: "and", attributes: [NSAttributedString.Key.font: boldFont]))
         expected.append(NSAttributedString(string: " puppies", attributes: [NSAttributedString.Key.font: baseFont]))
         XCTAssertEqual(actual, expected)
     }
@@ -91,7 +92,7 @@ class AttributedTests: XCTestCase {
 
     func testOrder() {
         let actual = NSAttributedString.attributedStringFromMarkup("<strong>kittens<regular>puppies</regular></strong>", withModifier: modifier)
-        let expected = NSMutableAttributedString(string: "kittens", attributes: [NSAttributedString.Key.font: baseFont.fontWithBold()])
+        let expected = NSMutableAttributedString(string: "kittens", attributes: [NSAttributedString.Key.font: boldFont])
         expected.append(NSAttributedString(string: "puppies", attributes: [NSAttributedString.Key.font: baseFont]))
         XCTAssertEqual(actual, expected)
     }
