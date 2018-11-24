@@ -27,7 +27,7 @@ extension NSMutableAttributedString {
         let replacement = NSMutableAttributedString()
         
         var smallAttributes = attributes
-        smallAttributes[NSAttributedString.Key.font] = font.withSize(ceil(font.pointSize * 1.1 * font.xHeight / font.capHeight))
+        smallAttributes[.font] = font.withSize(ceil(font.pointSize * 1.1 * font.xHeight / font.capHeight))
         
         let lowercaseCharacterSet = CharacterSet.lowercaseLetters
         

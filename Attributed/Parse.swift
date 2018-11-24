@@ -51,7 +51,7 @@ private class ParserDelegate: NSObject, XMLParserDelegate {
     @objc func parser(_ parser: XMLParser, didStartElement elementName: String, namespaceURI: String?, qualifiedName qName: String?, attributes attributeDict: [String : String]) {
         let range = NSMakeRange(lastIndex, result.length - lastIndex)
         let startElement = MarkupElement(name: elementName, attributes: attributeDict)
-        modify(in: range, startElement: startElement)
+        modify(in: range, startElement: startElement, endElement: nil)
         
         lastIndex = result.length
         stack.append(startElement)
@@ -59,7 +59,8 @@ private class ParserDelegate: NSObject, XMLParserDelegate {
     
     @objc func parser(_ parser: XMLParser, didEndElement elementName: String, namespaceURI: String?, qualifiedName qName: String?) {
         let range = NSMakeRange(lastIndex, result.length - lastIndex)
-        modify(in: range, startElement: nil)
+        let endElement = stack.last
+        modify(in: range, startElement: nil, endElement: endElement)
         
         lastIndex = result.length
         stack.removeLast()
@@ -69,9 +70,10 @@ private class ParserDelegate: NSObject, XMLParserDelegate {
         result.append(NSAttributedString(string: string))
     }
     
-    func modify(in range: NSRange, startElement: MarkupElement?) {
+    func modify(in range: NSRange, startElement: MarkupElement?, endElement: MarkupElement?) {
         if !stack.isEmpty {
-            modifier(result, range, Array(stack[1..<stack.count]), startElement)
+            let state = State(mutableAttributedString: result, range: range, stack: Array(stack[1..<stack.count]), startElement: startElement, endElement: endElement)
+            modifier(state)
         }
     }
 }

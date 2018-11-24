@@ -27,9 +27,9 @@ public enum Modifiers {
         guard attributedString.length > 0,
             let result = attributedString.mutableCopy() as? NSMutableAttributedString else { return attributedString }
 
-        if let font = attributedString.attributes(at: 0, effectiveRange: nil)[NSAttributedString.Key.font] as? UIFont {
+        if let font = attributedString.attributes(at: 0, effectiveRange: nil)[.font] as? UIFont {
             let range = NSMakeRange(0, attributedString.length)
-            result.addAttribute(NSAttributedString.Key.font, value: font.fontWithRegular(), range: range)
+            result.addAttribute(.font, value: font.fontWithRegular(), range: range)
         }
         return result
     }
@@ -38,9 +38,9 @@ public enum Modifiers {
         guard attributedString.length > 0,
             let result = attributedString.mutableCopy() as? NSMutableAttributedString else { return attributedString }
 
-        if let font = attributedString.attributes(at: 0, effectiveRange: nil)[NSAttributedString.Key.font] as? UIFont {
+        if let font = attributedString.attributes(at: 0, effectiveRange: nil)[.font] as? UIFont {
             let range = NSMakeRange(0, attributedString.length)
-            result.addAttribute(NSAttributedString.Key.font, value: font.fontWithBold(), range: range)
+            result.addAttribute(.font, value: font.fontWithBold(), range: range)
         }
         return result
     }
@@ -49,9 +49,9 @@ public enum Modifiers {
         guard attributedString.length > 0,
             let result = attributedString.mutableCopy() as? NSMutableAttributedString else { return attributedString }
 
-        if let font = attributedString.attributes(at: 0, effectiveRange: nil)[NSAttributedString.Key.font] as? UIFont {
+        if let font = attributedString.attributes(at: 0, effectiveRange: nil)[.font] as? UIFont {
             let range = NSMakeRange(0, attributedString.length)
-            result.addAttribute(NSAttributedString.Key.font, value: font.fontWithItalic(), range: range)
+            result.addAttribute(.font, value: font.fontWithItalic(), range: range)
         }
         return result
     }
@@ -60,9 +60,9 @@ public enum Modifiers {
         guard attributedString.length > 0,
             let result = attributedString.mutableCopy() as? NSMutableAttributedString else { return attributedString }
 
-        if let font = attributedString.attributes(at: 0, effectiveRange: nil)[NSAttributedString.Key.font] as? UIFont {
+        if let font = attributedString.attributes(at: 0, effectiveRange: nil)[.font] as? UIFont {
             let range = NSMakeRange(0, attributedString.length)
-            result.addAttribute(NSAttributedString.Key.font, value: font.fontWithMonospacedNumbers(), range: range)
+            result.addAttribute(.font, value: font.fontWithMonospacedNumbers(), range: range)
         }
         return result
     }
@@ -72,10 +72,10 @@ public enum Modifiers {
             let result = attributedString.mutableCopy() as? NSMutableAttributedString else { return attributedString }
 
         let attributes = attributedString.attributes(at: 0, effectiveRange: nil)
-        if let font = attributes[NSAttributedString.Key.font] as? UIFont {
+        if let font = attributes[.font] as? UIFont {
             let range = NSMakeRange(0, attributedString.length)
             if font.supportsSmallCaps, let smallCapsFont = font.fontWithSmallCaps() {
-                result.addAttribute(NSAttributedString.Key.font, value: smallCapsFont, range: range)
+                result.addAttribute(.font, value: smallCapsFont, range: range)
             } else {
                 result.simulateSmallCapsInRange(range, withFont: font, attributes: attributes)
             }

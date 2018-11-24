@@ -22,16 +22,26 @@
 
 import Foundation
 
-public typealias Modifier = (_ mutableAttributedString: NSMutableAttributedString, _ range: NSRange, _ stack: [MarkupElement], _ startElement: MarkupElement?) -> Void
+public struct State {
+    var mutableAttributedString: NSMutableAttributedString
+    var range: NSRange
+    var stack: [MarkupElement]
+    var startElement: MarkupElement?
+    var endElement: MarkupElement?
+}
+
+public typealias Modifier = (_ state: State) -> Void
 
 public func modifierWithBaseAttributes(_ attributes: [NSAttributedString.Key: Any], modifiers: [Modifier]) -> Modifier {
-    return { mutableAttributedString, range, stack, startElement in
-        mutableAttributedString.addAttributes(attributes, range: range)
+    return { state in
+        state.mutableAttributedString.addAttributes(attributes, range: state.range)
 
-        for count in 0...stack.count {
-            let localStack = Array(stack[0..<count])
+        for count in 0...state.stack.count {
+            let localStack = Array(state.stack[0..<count])
             for modifier in modifiers {
-                modifier(mutableAttributedString, range, localStack, startElement)
+                var newState = state
+                newState.stack = localStack
+                modifier(newState)
             }
         }
     }
@@ -40,57 +50,57 @@ public func modifierWithBaseAttributes(_ attributes: [NSAttributedString.Key: An
 public typealias Map = (NSAttributedString) -> NSAttributedString
 
 public func selectMap(_ selector: String, _ map: @escaping Map) -> Modifier {
-    return { mutableAttributedString, range, stack, _ in
-        guard let element = stack.last, selector ~= element else { return }
+    return { state in
+        guard let element = state.stack.last, selector ~= element else { return }
 
-        let attributedString = mutableAttributedString.attributedSubstring(from: range)
-        mutableAttributedString.replaceCharacters(in: range, with: map(attributedString))
+        let attributedString = state.mutableAttributedString.attributedSubstring(from: state.range)
+        state.mutableAttributedString.replaceCharacters(in: state.range, with: map(attributedString))
     }
 }
 
 public func selectMapBefore(_ selector: String, _ map: @escaping Map) -> Modifier {
-    return { mutableAttributedString, range, stack, startElement in
-        guard let element = startElement, selector ~= element else { return }
+    return { state in
+        guard let element = state.startElement, selector ~= element else { return }
 
-        let attributedString = mutableAttributedString.attributedSubstring(from: range)
-        mutableAttributedString.replaceCharacters(in: range, with: map(attributedString))
+        let attributedString = state.mutableAttributedString.attributedSubstring(from: state.range)
+        state.mutableAttributedString.replaceCharacters(in: state.range, with: map(attributedString))
     }
 }
 
 public func selectMapAfter(_ selector: String, _ map: @escaping Map) -> Modifier {
-    return { mutableAttributedString, range, stack, startElement in
-        guard startElement == nil, let element = stack.last, selector ~= element else { return }
+    return { state in
+        guard let element = state.endElement, state.stack.isEmpty, selector ~= element else { return }
 
-        let attributedString = mutableAttributedString.attributedSubstring(from: range)
-        mutableAttributedString.replaceCharacters(in: range, with: map(attributedString))
+        let attributedString = state.mutableAttributedString.attributedSubstring(from: state.range)
+        state.mutableAttributedString.replaceCharacters(in: state.range, with: map(attributedString))
     }
 }
 
 public typealias MapWithContext = (NSAttributedString, NSAttributedString) -> NSAttributedString
 
 public func selectMap(_ selector: String, _ mapWithContext: @escaping MapWithContext) -> Modifier {
-    return { mutableAttributedString, range, stack, _ in
-        guard let element = stack.last, selector ~= element else { return }
+    return { state in
+        guard let element = state.stack.last, selector ~= element else { return }
 
-        let attributedString = mutableAttributedString.attributedSubstring(from: range)
-        mutableAttributedString.replaceCharacters(in: range, with: mapWithContext(mutableAttributedString, attributedString))
+        let attributedString = state.mutableAttributedString.attributedSubstring(from: state.range)
+        state.mutableAttributedString.replaceCharacters(in: state.range, with: mapWithContext(state.mutableAttributedString, attributedString))
     }
 }
 
 public func selectMapBefore(_ selector: String, _ mapWithContext: @escaping MapWithContext) -> Modifier {
-    return { mutableAttributedString, range, stack, startElement in
-        guard let element = startElement, selector ~= element else { return }
+    return { state in
+        guard let element = state.startElement, selector ~= element else { return }
 
-        let attributedString = mutableAttributedString.attributedSubstring(from: range)
-        mutableAttributedString.replaceCharacters(in: range, with: mapWithContext(mutableAttributedString, attributedString))
+        let attributedString = state.mutableAttributedString.attributedSubstring(from: state.range)
+        state.mutableAttributedString.replaceCharacters(in: state.range, with: mapWithContext(state.mutableAttributedString, attributedString))
     }
 }
 
 public func selectMapAfter(_ selector: String, _ mapWithContext: @escaping MapWithContext) -> Modifier {
-    return { mutableAttributedString, range, stack, startElement in
-        guard startElement == nil, let element = stack.last, selector ~= element else { return }
+    return { state in
+        guard let element = state.endElement, state.stack.isEmpty, selector ~= element else { return }
 
-        let attributedString = mutableAttributedString.attributedSubstring(from: range)
-        mutableAttributedString.replaceCharacters(in: range, with: mapWithContext(mutableAttributedString, attributedString))
+        let attributedString = state.mutableAttributedString.attributedSubstring(from: state.range)
+        state.mutableAttributedString.replaceCharacters(in: state.range, with: mapWithContext(state.mutableAttributedString, attributedString))
     }
 }

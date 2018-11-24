@@ -25,7 +25,7 @@ import Attributed
 
 private let baseFont = UIFont.systemFont(ofSize: 10)
 private let boldFont = UIFont.boldSystemFont(ofSize: 10)
-private let modifier: Modifier = modifierWithBaseAttributes([NSAttributedString.Key.font: baseFont], modifiers: [
+private let modifier: Modifier = modifierWithBaseAttributes([.font: baseFont], modifiers: [
     selectMap("regular", Modifiers.regular),
     selectMap("strong", Modifiers.bold),
     selectMap("p", Modifiers.para),
@@ -54,52 +54,68 @@ class AttributedTests: XCTestCase {
     
     func testPlainText() {
         let actual = NSAttributedString.attributedStringFromMarkup("puppy", withModifier: modifier)
-        let expected = NSAttributedString(string: "puppy", attributes: [NSAttributedString.Key.font: baseFont])
+        let expected = NSAttributedString(string: "puppy", attributes: [.font: baseFont])
         XCTAssertEqual(actual, expected)
     }
     
     func testElement() {
         let actual = NSAttributedString.attributedStringFromMarkup("kittens <strong>and</strong> puppies", withModifier: modifier)
-        let expected = NSMutableAttributedString(string: "kittens ", attributes: [NSAttributedString.Key.font: baseFont])
-        expected.append(NSAttributedString(string: "and", attributes: [NSAttributedString.Key.font: boldFont]))
-        expected.append(NSAttributedString(string: " puppies", attributes: [NSAttributedString.Key.font: baseFont]))
+        let expected = NSMutableAttributedString(string: "kittens ", attributes: [.font: baseFont])
+        expected.append(NSAttributedString(string: "and", attributes: [.font: boldFont]))
+        expected.append(NSAttributedString(string: " puppies", attributes: [.font: baseFont]))
         XCTAssertEqual(actual, expected)
     }
 
     func testPara() {
         let actual = NSAttributedString.attributedStringFromMarkup("<p>kittens</p>puppies", withModifier: modifier)
-        let expected = NSAttributedString(string: "kittens\npuppies", attributes: [NSAttributedString.Key.font: baseFont])
+        let expected = NSAttributedString(string: "kittens\npuppies", attributes: [.font: baseFont])
         XCTAssertEqual(actual, expected)
     }
 
     func testLineBreak() {
         let actual = NSAttributedString.attributedStringFromMarkup("kittens<br/>puppies", withModifier: modifier)
-        let expected = NSAttributedString(string: "kittens\npuppies", attributes: [NSAttributedString.Key.font: baseFont])
+        let expected = NSAttributedString(string: "kittens\npuppies", attributes: [.font: baseFont])
         XCTAssertEqual(actual, expected)
     }
 
     func testBefore() {
         let actual = NSAttributedString.attributedStringFromMarkup("bunnies<before>kittens</before>puppies", withModifier: modifier)
-        let expected = NSAttributedString(string: "bunnies\nkittenspuppies", attributes: [NSAttributedString.Key.font: baseFont])
+        let expected = NSAttributedString(string: "bunnies\nkittenspuppies", attributes: [.font: baseFont])
+        XCTAssertEqual(actual, expected)
+    }
+
+    func testNestedBefore() {
+        let actual = NSAttributedString.attributedStringFromMarkup("bunnies<before>cats <strong>and</strong> kittens</before>puppies", withModifier: modifier)
+        let expected = NSMutableAttributedString(string: "bunnies\ncats ", attributes: [.font: baseFont])
+        expected.append(NSAttributedString(string: "and", attributes: [.font: boldFont]))
+        expected.append(NSAttributedString(string: " kittenspuppies", attributes: [.font: baseFont]))
         XCTAssertEqual(actual, expected)
     }
 
     func testAfter() {
         let actual = NSAttributedString.attributedStringFromMarkup("bunnies<after>kittens</after>puppies", withModifier: modifier)
-        let expected = NSAttributedString(string: "bunnieskittens\npuppies", attributes: [NSAttributedString.Key.font: baseFont])
+        let expected = NSAttributedString(string: "bunnieskittens\npuppies", attributes: [.font: baseFont])
+        XCTAssertEqual(actual, expected)
+    }
+
+    func testNestedAfter() {
+        let actual = NSAttributedString.attributedStringFromMarkup("bunnies<after>cats <strong>and</strong> kittens</after>puppies", withModifier: modifier)
+        let expected = NSMutableAttributedString(string: "bunniescats ", attributes: [.font: baseFont])
+        expected.append(NSAttributedString(string: "and", attributes: [.font: boldFont]))
+        expected.append(NSAttributedString(string: " kittens\npuppies", attributes: [.font: baseFont]))
         XCTAssertEqual(actual, expected)
     }
 
     func testOrder() {
         let actual = NSAttributedString.attributedStringFromMarkup("<strong>kittens<regular>puppies</regular></strong>", withModifier: modifier)
-        let expected = NSMutableAttributedString(string: "kittens", attributes: [NSAttributedString.Key.font: boldFont])
-        expected.append(NSAttributedString(string: "puppies", attributes: [NSAttributedString.Key.font: baseFont]))
+        let expected = NSMutableAttributedString(string: "kittens", attributes: [.font: boldFont])
+        expected.append(NSAttributedString(string: "puppies", attributes: [.font: baseFont]))
         XCTAssertEqual(actual, expected)
     }
 
     func testWidont() {
         let actual = NSAttributedString.attributedStringFromMarkup("<widont><p>bunnies, kittens, and puppies</p></widont>", withModifier: modifier)
-        let expected = NSAttributedString(string: "bunnies, kittens, and\u{00a0}puppies\n", attributes: [NSAttributedString.Key.font: baseFont])
+        let expected = NSAttributedString(string: "bunnies, kittens, and\u{00a0}puppies\n", attributes: [.font: baseFont])
         XCTAssertEqual(actual, expected)
     }
 }
