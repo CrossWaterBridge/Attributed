@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name         = "Attributed"
-  s.version      = "8.0.1"
+  s.version      = "8.0.2"
   s.summary      = "Convert XML to an NSAttributedString."
   s.author       = 'Hilton Campbell'
   s.homepage     = "https://github.com/CrossWaterBridge/Attributed"
@@ -9,7 +9,7 @@ Pod::Spec.new do |s|
   s.ios.deployment_target = '8.0'
   s.tvos.deployment_target = '9.0'
   s.watchos.deployment_target = '2.0'
-  s.swift_version = '4.2'
+  s.swift_version = '5.0'
   s.source_files = 'Attributed/*.swift'
   s.framework = 'UIKit'
   s.requires_arc = true
