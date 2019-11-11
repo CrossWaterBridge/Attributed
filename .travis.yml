@@ -1,10 +1,6 @@
-sudo: false
-language: objective-c
-osx_image: xcode10
-
+language: swift
+osx_image: xcode11.2
 xcode_project: Attributed.xcodeproj
 xcode_scheme: Attributed
 xcode_sdk: iphonesimulator
-
-script:
-- xcodebuild clean build test -project Attributed.xcodeproj -scheme Attributed -sdk iphonesimulator -destination "name=iPhone 7,OS=latest"
+xcode_destination: platform=iOS Simulator,OS=latest,name=iPhone 8
