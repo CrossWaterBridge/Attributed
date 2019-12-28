@@ -93,6 +93,19 @@ public enum Modifiers {
     public static func lineBreak(_ context: NSAttributedString, attributedString: NSAttributedString) -> NSAttributedString {
         return NSAttributedString(string: "\n", attributes: context.attributes(at: context.length - 1, effectiveRange: nil))
     }
+
+    public static func link(urlAttributeName: String = "href") -> MapWithElement {
+        return { element, attributedString in
+            guard attributedString.length > 0,
+                let result = attributedString.mutableCopy() as? NSMutableAttributedString,
+                let href = element.attributes[urlAttributeName],
+                let url = URL(string: href) else { return attributedString }
+
+            let range = NSMakeRange(0, attributedString.length)
+            result.addAttribute(.link, value: url, range: range)
+            return result
+        }
+    }
 }
 
 private let widontRegex = try! NSRegularExpression(pattern: "\\S(\\s+)\\S+\\s*$", options: .anchorsMatchLines)

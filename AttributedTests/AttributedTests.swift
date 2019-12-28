@@ -32,7 +32,8 @@ private let modifier: Modifier = modifierWithBaseAttributes([.font: baseFont], m
     selectMap("br", Modifiers.lineBreak),
     selectMapBefore("before", TestModifiers.marker),
     selectMapAfter("after", TestModifiers.marker),
-    selectMap("widont", Modifiers.widont)
+    selectMap("widont", Modifiers.widont),
+    selectMap("a", Modifiers.link())
 ])
 
 private enum TestModifiers {
@@ -116,6 +117,14 @@ class AttributedTests: XCTestCase {
     func testWidont() {
         let actual = NSAttributedString.attributedStringFromMarkup("<widont><p>bunnies, kittens, and puppies</p></widont>", withModifier: modifier)
         let expected = NSAttributedString(string: "bunnies, kittens, and\u{00a0}puppies\n", attributes: [.font: baseFont])
+        XCTAssertEqual(actual, expected)
+    }
+
+    func testLink() {
+        let actual = NSAttributedString.attributedStringFromMarkup(#"bunnies, <a href="https://www.apple.com/">kittens</a>, and puppies"#, withModifier: modifier)
+        let expected = NSMutableAttributedString(string: "bunnies, ", attributes: [.font: baseFont])
+        expected.append(NSAttributedString(string: "kittens", attributes: [.font: baseFont, .link: URL(string: "https://www.apple.com/")!]))
+        expected.append(NSAttributedString(string: ", and puppies", attributes: [.font: baseFont]))
         XCTAssertEqual(actual, expected)
     }
 }
